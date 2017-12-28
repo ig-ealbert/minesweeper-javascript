@@ -1,0 +1,14 @@
+td > button {
+	height: 35px;
+	width: 35px;
+	background-size: cover;
+}
+
+td > button:disabled {
+	background: white;
+	background-size: cover;
+}
+
+.greenBorder {
+	border: 2px solid green;
+}
