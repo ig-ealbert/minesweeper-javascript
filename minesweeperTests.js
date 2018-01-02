@@ -170,6 +170,28 @@ QUnit.test( "A cell with 8 adjacent mines should display 8 when clicked", functi
   assert.equal( button.innerHTML, "8", "8 is displayed as the cell hint." );
 });
 
+QUnit.test( "A cell with 0 adjacent mines should splash when clicked", function (assert ) {
+  gameState = [[false, false, false, false], [true, false, false, false], [true, false, false, false], [false, true, true, false]];
+  uiState = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+  var board = document.getElementById("board");
+  var secondRow = board.getElementsByTagName("tr")[1];
+  var thirdCell = secondRow.getElementsByTagName("td")[2];
+  cellClicked(thirdCell);
+  var expected = [[0, 1, 1, 1], [0, 1, 1, 1], [0, 1, 1, 1], [0, 0, 0, 0]];
+  assert.deepEqual( uiState, expected, "Adjacent cells also display a cell hint." );
+});
+
+QUnit.test( "A splashed cell with 0 adjacent mines should also splash", function (assert ) {
+  gameState = [[false, false, false, false], [false, false, false, false], [true, false, false, false], [false, true, true, false]];
+  uiState = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+  var board = document.getElementById("board");
+  var secondRow = board.getElementsByTagName("tr")[1];
+  var thirdCell = secondRow.getElementsByTagName("td")[2];
+  cellClicked(thirdCell);
+  var expected = [[1, 1, 1, 1], [1, 1, 1, 1], [0, 1, 1, 1], [0, 0, 0, 0]];
+  assert.deepEqual( uiState, expected, "Splashed cells also splash." );
+});
+
 QUnit.test( "An unclicked cell should become clicked when clicked", function (assert ) {
   var board = document.getElementById("board");
   var secondRow = board.getElementsByTagName("tr")[1];

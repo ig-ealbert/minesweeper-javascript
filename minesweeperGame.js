@@ -1,4 +1,4 @@
-var gameState = setDifficulty("easy"); // true = mine, false = safe
+var gameState = setDifficulty("easy"); // true = mine, false = no mine
 var uiState; // 0 = unclicked, 1 = clicked, 2 = flagged
 
 function setDifficulty(level) {
@@ -104,14 +104,16 @@ function cellClicked(cell) {
 	if (uiState[row][col] !== 2) { // don't click flagged cells
 		uiState[row][col] = 1;
 		if (gameState[row][col]) {
-			cell.children[0].style.backgroundImage = 'url("mine.png")';
+			setImage(cell, 'url("mine.png")');
 			endGame("You lose!");
 		}
 		else {
-			cell.children[0].innerHTML = adjacentCellsWithMines(cell);
-			if (checkForWin()) {
-				endGame("You win!");
+			var hint = adjacentCellsWithMines(row, col);
+			cell.children[0].innerHTML = hint;
+			if (hint === 0) {
+				splashHints(row, col);
 			}
+			checkForWin();
 		}
 		cell.children[0].disabled = true;
 	}
@@ -121,14 +123,17 @@ function cellFlagged(cell) {
 	var row = cell.parentNode.rowIndex;
 	var col = cell.cellIndex;
 	if (uiState[row][col] !== 2) {
-		cell.children[0].style.backgroundImage = 'url("flag.png")';
+		setImage(cell, 'url("flag.png")');
 		uiState[row][col] = 2;
 	}
 	else {
-		cell.children[0].style.backgroundImage = "";
+		setImage(cell, "");
 		uiState[row][col] = 0;
 	}
-	
+}
+
+function setImage(cell, url) {
+	cell.children[0].style.backgroundImage = url;
 }
 
 function endGame(result) {
@@ -138,16 +143,12 @@ function endGame(result) {
 	resetButton.classList.add("greenBorder");
 }
 
-function adjacentCellsWithMines(cell) {
-	var row = cell.parentNode.rowIndex;
-	var col = cell.cellIndex;
-	var rows = gameState.length;
-	var cols = gameState[0].length;
+function adjacentCellsWithMines(row, col) {
 	var total = 0;
 	for (var rOffset = -1; rOffset < 2; rOffset++) {
-        if ((row + rOffset < rows) && (row + rOffset >= 0)) {
+        if ((row + rOffset < gameState.length) && (row + rOffset >= 0)) {
             for (var cOffset = -1; cOffset < 2; cOffset++) {
-                if ((col + cOffset < cols) && (col + cOffset >= 0)) {
+                if ((col + cOffset < gameState[0].length) && (col + cOffset >= 0)) {
                     if (gameState[row + rOffset][col + cOffset]) {
                         total++;
                     }
@@ -158,6 +159,29 @@ function adjacentCellsWithMines(cell) {
 	return total;
 }
 
+function splashHints(row, col) {
+	for (var rOffset = -1; rOffset < 2; rOffset++) {
+		var newRow = row + rOffset;
+        if ((newRow < gameState.length) && (newRow >= 0)) {
+            for (var cOffset = -1; cOffset < 2; cOffset++) {
+				var newCol = col + cOffset;
+                if ((newCol < gameState[0].length) && (newCol >= 0)) {
+                    if (uiState[newRow][newCol] === 0) { // only splash unclicked spaces
+						cellClicked(getCell(row + rOffset, col + cOffset));
+					}
+                }
+            }
+        }
+    }
+}
+
+function getCell(row, col) {
+	var table = document.getElementById("board");
+	var cellRow = board.getElementsByTagName("tr")[row];
+	var cell = cellRow.getElementsByTagName("td")[col];
+	return cell;
+}
+
 function checkForWin() {
 	for (var i = 0; i < gameState.length; i++) {
 		for (var j = 0; j < gameState[i].length; j++) {
@@ -166,5 +190,6 @@ function checkForWin() {
 			}
 		}
 	}
+	endGame("You win!");
 	return true;
 }
