@@ -10,21 +10,22 @@
 <body>
   <div id="qunit"></div>
   <div id="qunit-fixture">
-	<!-- This is the HTML from index.html -->
-	<table id="board">
-		
-	</table>
-	<div>
-		<select id="level" onchange="gameState = setDifficulty(this.value);">
-			<option value="easy">Easy</option>
-			<option value="medium">Medium</option>
-			<option value="hard">Hard</option>
-		</select>
-		<input id="restartGame" type="button" value="Reset" onclick="gameState = setDifficulty(document.getElementById('level').value);" />
-	</div>
-	<div>
-		<label id="message"></label>
-	</div>
+  <!-- This is the HTML from index.html -->
+  <table id="board">
+    
+  </table>
+  <div>
+    <select id="level" onchange="gameState = startGame(this.value);">
+      <option value="easy">Easy</option>
+      <option value="medium">Medium</option>
+      <option value="hard">Hard</option>
+    </select>
+    <input id="restartGame" type="button" value="Reset"
+           onclick="gameState = startGame(document.getElementById('level').value);" />
+  </div>
+  <div>
+    <label id="message"></label>
+  </div>
   </div>
   <script src="https://code.jquery.com/qunit/qunit-2.4.0.js"></script>
   <script src="minesweeperGame.js"></script>
