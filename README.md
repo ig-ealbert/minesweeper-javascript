@@ -8,9 +8,9 @@ The game provides a grid of different sizes based on difficulty. The goal is to 
 
 ## Note About Splashing
 
-In the original JavaScript/HTML/CSS implementation, clicking on a space with no adjacent mines would properly splash "clicks" to all surrounding spaces until all edge values were non-zero. This is how the game is supposed to work.
+Splashing now works on Easy mode. In Medium, sometimes it stops working and I don't know why. I can't reliably reproduce the issue.
 
-When rewriting it in Next.js, I found this was not possible. For now, it will simply splash all adjacent spaces and then stop. If you know how to do this to match the original implementation, please let me know!
+I am doing this through `useEffect` and so it's a slow splash. I knew that going in and I named the function appropriately. I suspect the solution to any issues I'm encountering would be to cache the intermediate outcomes and only set state at the end. That is a possibility for the future.
 
 ## Running the Game
 
