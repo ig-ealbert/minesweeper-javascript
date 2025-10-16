@@ -9,9 +9,9 @@ export default function Board(props: boardProps) {
   function checkForWin(newBoardStatus: boardUI) {
     if (props.checkForWin(newBoardStatus)) {
       for (const row of newBoardStatus) {
-        for (let space of row) {
+        for (const [index, space] of row.entries()) {
           if (space === ClickStatus.UNCLICKED) {
-            space = ClickStatus.FLAGGED;
+            row[index] = ClickStatus.FLAGGED;
           }
         }
       }
