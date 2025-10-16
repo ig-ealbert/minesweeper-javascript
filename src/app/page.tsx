@@ -8,32 +8,33 @@ import { mineState } from "@/types/mineState";
 import { size } from "@/types/size";
 import { difficulties } from "@/lib/difficulties";
 import { checkForWin } from "@/lib/end-game";
-import { initializeGameState } from "@/lib/game-state";
+import { initializeMines } from "@/lib/game-state";
 import {
-  adjacentCellsWithMines,
-  findFirstSpaceToSplash,
-  updateBoardWithHint,
+  setupHints,
+  markSpaceClicked,
+  findAdjacentUnclickedZeroes,
 } from "@/lib/hints";
+import { splashInfo } from "@/types/splashInfo";
+import { arrayContainsSpace } from "@/lib/splash";
 
 export default function Home() {
   const [difficulty, setDifficulty] = useState<string>("easy");
   const [size, setSize] = useState<size>({ rows: 8, columns: 8 });
   const [numMines, setNumMines] = useState<number>(10);
   useEffect(() => {
-    setSize({
+    const newSize = {
       rows: difficulties[difficulty].rows,
       columns: difficulties[difficulty].columns,
-    });
-    setNumMines(difficulties[difficulty].mines);
-    reset();
+    };
+    setSize(newSize);
+    const newNumMines = difficulties[difficulty].mines;
+    setNumMines(newNumMines);
+    reset(newSize, newNumMines);
   }, [difficulty]);
   const [mineLayout, setMineLayout] = useState<mineState>(
-    initializeGameState(size, numMines)
+    new Array(size.rows).fill(new Array(size.columns).fill(0))
   );
-  useEffect(
-    () => setMineLayout(initializeGameState(size, numMines)),
-    [size, numMines]
-  );
+
   const [message, setMessage] = useState<string>("");
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
 
@@ -44,46 +45,48 @@ export default function Home() {
 
   // Hint values to be displayed on the UI
   const [boardValue, setBoardValue] = useState<boardUI>(
-    new Array(size.rows).fill(new Array(size.columns).fill(0))
+    new Array(size.rows).fill(new Array(size.columns).fill(-2))
   );
 
-  // Helper for splashing
-  const [lastSplashClick, setLastSplashClick] = useState<number[]>([-1, -1]);
-  useEffect(() => {
-    if (lastSplashClick[0] !== -1 && lastSplashClick[1] !== -1) {
-      slowSplash();
-    }
-  }, [lastSplashClick]);
-
-  function slowSplash() {
-    // Find valid space next to zero
-    const spaceToClick = findFirstSpaceToSplash(boardStatus, boardValue);
-    if (!spaceToClick.exists) {
-      return;
-    }
-    // Click it
-    const result = handleSpaceClick(spaceToClick.row, spaceToClick.col);
-    // Update value and status
-    const hint = {
-      row: spaceToClick.row,
-      column: spaceToClick.col,
-      value: result.value,
+  function fastSplash(row: number, col: number) {
+    const info: splashInfo = {
+      status: boardStatus,
+      values: boardValue,
+      row,
+      col,
+      size,
     };
-    const newState = updateBoardWithHint(boardStatus, boardValue, hint);
-    setBoardStatus(newState.status);
-    setBoardValue(newState.values);
-    setLastSplashClick([spaceToClick.row, spaceToClick.col]);
+    const spacesToUncover = findAdjacentUnclickedZeroes(info);
+    let newStatus = markSpaceClicked(boardStatus, row, col);
+    while (spacesToUncover.length > 0) {
+      const space = spacesToUncover[0];
+      newStatus = markSpaceClicked(newStatus, space[0], space[1]);
+      const newSpacesToUncover = findAdjacentUnclickedZeroes({
+        ...info,
+        status: newStatus,
+        row: space[0],
+        col: space[1],
+      });
+      for (const newSpace of newSpacesToUncover) {
+        if (!arrayContainsSpace(spacesToUncover, newSpace)) {
+          spacesToUncover.push(newSpace);
+        }
+      }
+      spacesToUncover.shift(); // Remove first space in array
+    }
+    setBoardStatus(newStatus);
   }
 
   function handleDifficultyChange(event: ChangeEvent<HTMLSelectElement>) {
     setDifficulty(event.currentTarget.value);
   }
 
-  function reset() {
-    setMineLayout(initializeGameState(size, numMines));
+  function reset(size: size, numMines: number) {
+    const newMines = initializeMines(size, numMines);
+    setMineLayout(newMines);
     const empty = new Array(size.rows).fill(new Array(size.columns).fill(0));
     setBoardStatus(empty);
-    setBoardValue(empty);
+    setBoardValue(setupHints(newMines));
     setMessage("");
     setIsGameOver(false);
   }
@@ -101,25 +104,8 @@ export default function Home() {
     return checkForWin(mineLayout, uiState);
   }
 
-  function handleSpaceClick(row: number, column: number) {
-    if (mineLayout[row][column]) {
-      return {
-        isMine: true,
-        value: -1,
-      };
-    }
-    return {
-      isMine: false,
-      value: adjacentCellsWithMines(row, column, mineLayout),
-    };
-  }
-
   function handleUpdateStatuses(newBoardStatus: boardUI) {
     setBoardStatus(newBoardStatus);
-  }
-
-  function handleUpdateValues(newBoardValue: boardUI) {
-    setBoardValue(newBoardValue);
   }
 
   return (
@@ -130,12 +116,10 @@ export default function Home() {
           columns={size.columns}
           boardValue={boardValue}
           boardStatus={boardStatus}
-          setBoardValue={handleUpdateValues}
           setBoardStatus={handleUpdateStatuses}
-          setLastSplashClick={setLastSplashClick}
+          splash={fastSplash}
           isGameOver={isGameOver}
           checkForWin={didWin}
-          handleClick={handleSpaceClick}
           handleLoss={() => gameOver(false)}
           handleWin={() => gameOver(true)}
         ></Board>
@@ -156,7 +140,7 @@ export default function Home() {
             value="Reset"
             disabled={!isGameOver}
             className={styles.option}
-            onClick={reset}
+            onClick={() => reset(size, numMines)}
           />
         </div>
         <div>

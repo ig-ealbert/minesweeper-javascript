@@ -3,9 +3,9 @@ import assert from "node:assert";
 import {
   adjacentCellsWithMines,
   isOnBoard,
-  hasAdjacentUnclickedSpace,
-  updateBoardWithHint,
-  findFirstSpaceToSplash,
+  markSpaceClicked,
+  findAdjacentUnclickedZeroes,
+  setupHints,
 } from "./hints";
 
 describe("Hints helper functions", () => {
@@ -32,7 +32,6 @@ describe("Hints helper functions", () => {
   ];
 
   const emptyBoardStatuses = new Array(8).fill(new Array(8).fill(0));
-  const fullBoardSpacesClicked = new Array(8).fill(new Array(8).fill(1));
 
   it("Finds 0 adjacent cells with mines", () => {
     const answer = adjacentCellsWithMines(0, 0, gameState);
@@ -89,74 +88,35 @@ describe("Hints helper functions", () => {
     assert.strictEqual(isValid, false);
   });
 
-  it("Finds an adjacent unclicked space when one exists", () => {
-    const potentialSpace = hasAdjacentUnclickedSpace(0, 0, spacesClicked);
-    assert.deepStrictEqual(potentialSpace, {
-      exists: true,
-      row: 0,
+  it("Marks a space as clicked", () => {
+    const newBoard = markSpaceClicked(emptyBoardStatuses, 0, 0);
+    assert.strictEqual(newBoard[0][0], 1); // clicked
+  });
+
+  it("Finds adjacent unclicked zeroes", () => {
+    const info = {
+      status: spacesClicked,
+      values: setupHints(gameState),
+      row: 1,
       col: 1,
-    });
+      size: { rows: 8, columns: 8 },
+    };
+    const zeroes = findAdjacentUnclickedZeroes(info);
+    assert.strictEqual(zeroes.length, 7); // one space is clicked
   });
 
-  it("Finds no adjacent unclicked space when one does not exist", () => {
-    const potentialSpace = hasAdjacentUnclickedSpace(6, 6, spacesClicked);
-    assert.deepStrictEqual(potentialSpace, {
-      exists: false,
-      row: -1,
-      col: -1,
-    });
-  });
-
-  it("Finds no adjacent unclicked space - literal corner case", () => {
-    const potentialSpace = hasAdjacentUnclickedSpace(7, 7, spacesClicked);
-    assert.deepStrictEqual(potentialSpace, {
-      exists: false,
-      row: -1,
-      col: -1,
-    });
-  });
-
-  it("Updates board with hint", () => {
-    const newBoards = updateBoardWithHint(
-      emptyBoardStatuses,
-      emptyBoardStatuses,
-      {
-        row: 0,
-        column: 0,
-        value: 1,
-      }
-    );
-    assert.strictEqual(newBoards.values[0][0], 1); // 1 adjacent mine
-    assert.strictEqual(newBoards.status[0][0], 1); // clicked
-  });
-
-  it("Finds the first space to splash when one exists", () => {
-    const potentialSpace = findFirstSpaceToSplash(
-      spacesClicked,
-      emptyBoardStatuses
-    );
-    assert.strictEqual(potentialSpace.exists, true);
-    assert.strictEqual(potentialSpace.row, 0);
-    assert.strictEqual(potentialSpace.col, 1);
-  });
-
-  it("Finds no spaces to splash because no zeros are clicked", () => {
-    const potentialSpace = findFirstSpaceToSplash(
-      emptyBoardStatuses,
-      emptyBoardStatuses
-    );
-    assert.strictEqual(potentialSpace.exists, false);
-    assert.strictEqual(potentialSpace.row, -1);
-    assert.strictEqual(potentialSpace.col, -1);
-  });
-
-  it("Finds no spaces to splash because adjacent cells are clicked", () => {
-    const potentialSpace = findFirstSpaceToSplash(
-      fullBoardSpacesClicked,
-      emptyBoardStatuses
-    );
-    assert.strictEqual(potentialSpace.exists, false);
-    assert.strictEqual(potentialSpace.row, -1);
-    assert.strictEqual(potentialSpace.col, -1);
+  it("Sets up hints", () => {
+    const hints = setupHints(gameState);
+    const expected = [
+      [0, 0, 0, 0, 0, 0, 2, -1],
+      [0, 0, 0, 0, 0, 0, 3, -1],
+      [0, 0, 0, 0, 0, 0, 3, -1],
+      [0, 0, 0, 0, 0, 0, 3, -1],
+      [0, 0, 0, 0, 1, 2, 5, -1],
+      [0, 0, 0, 0, 2, -1, -1, -1],
+      [0, 0, 0, 1, 4, -1, 8, -1],
+      [0, 0, 0, 1, -1, -1, -1, -1],
+    ];
+    assert.deepStrictEqual(hints, expected);
   });
 });

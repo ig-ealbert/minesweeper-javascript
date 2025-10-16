@@ -6,12 +6,6 @@ The game provides a grid of different sizes based on difficulty. The goal is to 
 
 ![](GameScreenshot.png)
 
-## Note About Splashing
-
-Splashing now works on Easy mode. In Medium, sometimes it stops working and I don't know why. I can't reliably reproduce the issue.
-
-I am doing this through `useEffect` and so it's a slow splash. I knew that going in and I named the function appropriately. I suspect the solution to any issues I'm encountering would be to cache the intermediate outcomes and only set state at the end. That is a possibility for the future.
-
 ## Running the Game
 
 ```

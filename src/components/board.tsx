@@ -1,19 +1,14 @@
-import { updateBoardWithHint } from "@/lib/hints";
+import { markSpaceClicked } from "@/lib/hints";
 import styles from "../app/page.module.css";
 import Square from "./square";
 import { boardProps } from "@/types/boardProps";
 import { boardUI } from "@/types/boardUI";
 
 export default function Board(props: boardProps) {
-  function calculateHint(row: number, column: number) {
-    const outcome = props.handleClick(row, column);
-    return { row, column, value: outcome.value };
-  }
-
   function checkForWin(newBoardStatus: boardUI) {
     if (props.checkForWin(newBoardStatus)) {
       for (const row of newBoardStatus) {
-        for (const [index, cell] of row.entries()) {
+        for (const [index] of row.entries()) {
           if (row[index] === 0) {
             row[index] = 2;
           }
@@ -29,24 +24,19 @@ export default function Board(props: boardProps) {
       return; // ignore clicks on flags
     }
 
-    const clickedSpaceHint = calculateHint(row, column);
-    if (clickedSpaceHint.value === -1) {
+    const clickedSpaceHint = props.boardValue[row][column];
+    if (clickedSpaceHint === -1) {
       props.handleLoss();
     }
 
-    const updatedBoards = updateBoardWithHint(
-      props.boardStatus,
-      props.boardValue,
-      clickedSpaceHint
-    );
-    props.setBoardStatus(updatedBoards.status);
-    props.setBoardValue(updatedBoards.values);
+    const updatedStatus = markSpaceClicked(props.boardStatus, row, column);
+    props.setBoardStatus(updatedStatus);
 
-    if (clickedSpaceHint.value === 0) {
-      props.setLastSplashClick([row, column]);
+    if (clickedSpaceHint === 0) {
+      props.splash(row, column);
     }
 
-    checkForWin(updatedBoards.status);
+    checkForWin(updatedStatus);
   }
 
   function toggleFlag(row: number, column: number) {
