@@ -16,6 +16,7 @@ import {
 } from "@/lib/hints";
 import { splashInfo } from "@/types/splashInfo";
 import { arrayContainsSpace } from "@/lib/splash";
+import { ClickStatus } from "@/enums/clickStatus";
 
 export default function Home() {
   const [difficulty, setDifficulty] = useState<string>("easy");
@@ -38,9 +39,10 @@ export default function Home() {
   const [message, setMessage] = useState<string>("");
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
 
-  // 0 = unclicked; 1 = clicked; 2 = flagged; -1 = mine clicked;
   const [boardStatus, setBoardStatus] = useState<boardUI>(
-    new Array(size.rows).fill(new Array(size.columns).fill(0))
+    new Array(size.rows).fill(
+      new Array(size.columns).fill(ClickStatus.UNCLICKED)
+    )
   );
 
   // Hint values to be displayed on the UI
@@ -84,8 +86,11 @@ export default function Home() {
   function reset(size: size, numMines: number) {
     const newMines = initializeMines(size, numMines);
     setMineLayout(newMines);
-    const empty = new Array(size.rows).fill(new Array(size.columns).fill(0));
-    setBoardStatus(empty);
+    setBoardStatus(
+      new Array(size.rows).fill(
+        new Array(size.columns).fill(ClickStatus.UNCLICKED)
+      )
+    );
     setBoardValue(setupHints(newMines));
     setMessage("");
     setIsGameOver(false);

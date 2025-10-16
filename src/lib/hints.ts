@@ -1,6 +1,7 @@
 import { size } from "@/types/size";
 import { adjacentCells } from "@/constants";
 import { splashInfo } from "@/types/splashInfo";
+import { ClickStatus } from "@/enums/clickStatus";
 
 export function adjacentCellsWithMines(
   row: number,
@@ -29,7 +30,7 @@ export function markSpaceClicked(
   column: number
 ) {
   const newStatus = status.map((row) => row.slice());
-  newStatus[row][column] = 1;
+  newStatus[row][column] = ClickStatus.CLICKED;
   return newStatus;
 }
 
@@ -40,7 +41,7 @@ export function findAdjacentUnclickedZeroes(info: splashInfo) {
     const newCol = info.col + offsets[1];
     if (
       isOnBoard(newRow, newCol, info.size) &&
-      info.status[newRow][newCol] === 0 &&
+      info.status[newRow][newCol] === ClickStatus.UNCLICKED &&
       info.values[newRow][newCol] === 0
     ) {
       validZeroes.push([newRow, newCol]);

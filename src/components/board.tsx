@@ -3,14 +3,15 @@ import styles from "../app/page.module.css";
 import Square from "./square";
 import { boardProps } from "@/types/boardProps";
 import { boardUI } from "@/types/boardUI";
+import { ClickStatus } from "@/enums/clickStatus";
 
 export default function Board(props: boardProps) {
   function checkForWin(newBoardStatus: boardUI) {
     if (props.checkForWin(newBoardStatus)) {
       for (const row of newBoardStatus) {
-        for (const [index] of row.entries()) {
-          if (row[index] === 0) {
-            row[index] = 2;
+        for (let space of row) {
+          if (space === ClickStatus.UNCLICKED) {
+            space = ClickStatus.FLAGGED;
           }
         }
       }
@@ -20,7 +21,7 @@ export default function Board(props: boardProps) {
   }
 
   function clickSpace(row: number, column: number) {
-    if (props.boardStatus[row][column] === 2) {
+    if (props.boardStatus[row][column] === ClickStatus.FLAGGED) {
       return; // ignore clicks on flags
     }
 
@@ -40,12 +41,15 @@ export default function Board(props: boardProps) {
   }
 
   function toggleFlag(row: number, column: number) {
-    const currentValue = props.boardStatus[row][column];
-    if (currentValue !== 2 && currentValue !== 0) {
+    const clickStatus = props.boardStatus[row][column];
+    if (clickStatus === ClickStatus.CLICKED) {
       return; // Don't do anything if we've already clicked here
     }
     const newBoardStatus = props.boardStatus.map((row) => row.slice());
-    newBoardStatus[row][column] = currentValue === 2 ? 0 : 2;
+    newBoardStatus[row][column] =
+      clickStatus === ClickStatus.FLAGGED
+        ? ClickStatus.UNCLICKED
+        : ClickStatus.FLAGGED;
     props.setBoardStatus(newBoardStatus);
     checkForWin(newBoardStatus);
   }
