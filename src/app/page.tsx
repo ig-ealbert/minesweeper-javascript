@@ -17,9 +17,10 @@ import {
 import { splashInfo } from "@/types/splashInfo";
 import { arrayContainsSpace } from "@/lib/splash";
 import { ClickStatus } from "@/enums/clickStatus";
+import { Difficulty } from "@/enums/difficulty";
 
 export default function Home() {
-  const [difficulty, setDifficulty] = useState<string>("easy");
+  const [difficulty, setDifficulty] = useState<Difficulty>(Difficulty.EASY);
   const [size, setSize] = useState<size>({ rows: 8, columns: 8 });
   const [numMines, setNumMines] = useState<number>(10);
   useEffect(() => {
@@ -80,7 +81,7 @@ export default function Home() {
   }
 
   function handleDifficultyChange(event: ChangeEvent<HTMLSelectElement>) {
-    setDifficulty(event.currentTarget.value);
+    setDifficulty(event.currentTarget.value as Difficulty);
   }
 
   function reset(size: size, numMines: number) {
@@ -135,9 +136,9 @@ export default function Home() {
             className={styles.option}
             onChange={handleDifficultyChange}
           >
-            <option value="easy">Easy</option>
-            <option value="medium">Medium</option>
-            <option value="hard">Hard</option>
+            <option value={Difficulty.EASY}>Easy</option>
+            <option value={Difficulty.MEDIUM}>Medium</option>
+            <option value={Difficulty.HARD}>Hard</option>
           </select>
           <input
             id="restartGame"
