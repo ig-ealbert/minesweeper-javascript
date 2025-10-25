@@ -21,6 +21,8 @@ export default function Square(props: squareValues) {
           <Image
             src="/flag.png"
             alt="flag icon"
+            width={35}
+            height={35}
             className={styles.imageButton}
           ></Image>
         )}
@@ -28,6 +30,8 @@ export default function Square(props: squareValues) {
           <Image
             src="/mine.png"
             alt="mine icon"
+            width={35}
+            height={35}
             className={styles.imageButton}
           ></Image>
         )}

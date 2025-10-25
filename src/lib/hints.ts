@@ -34,6 +34,23 @@ export function markSpaceClicked(
   return newStatus;
 }
 
+export function markSpaceAndAllAdjacentSpacesClicked(
+  status: number[][],
+  row: number,
+  column: number
+) {
+  let newStatus = markSpaceClicked(status, row, column);
+  for (const offset of adjacentCells) {
+    const newRow = row + offset[0];
+    const newCol = column + offset[1];
+    const boardSize = { rows: status.length, columns: status[0].length };
+    if (isOnBoard(newRow, newCol, boardSize)) {
+      newStatus = markSpaceClicked(newStatus, newRow, newCol);
+    }
+  }
+  return newStatus;
+}
+
 export function findAdjacentUnclickedZeroes(info: splashInfo) {
   const validZeroes = [];
   for (const offsets of adjacentCells) {

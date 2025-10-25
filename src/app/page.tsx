@@ -11,8 +11,8 @@ import { checkForWin } from "@/lib/end-game";
 import { initializeMines } from "@/lib/game-state";
 import {
   setupHints,
-  markSpaceClicked,
   findAdjacentUnclickedZeroes,
+  markSpaceAndAllAdjacentSpacesClicked,
 } from "@/lib/hints";
 import { splashInfo } from "@/types/splashInfo";
 import { arrayContainsSpace } from "@/lib/splash";
@@ -60,10 +60,14 @@ export default function Home() {
       size,
     };
     const spacesToUncover = findAdjacentUnclickedZeroes(info);
-    let newStatus = markSpaceClicked(boardStatus, row, col);
+    let newStatus = markSpaceAndAllAdjacentSpacesClicked(boardStatus, row, col);
     while (spacesToUncover.length > 0) {
       const space = spacesToUncover[0];
-      newStatus = markSpaceClicked(newStatus, space[0], space[1]);
+      newStatus = markSpaceAndAllAdjacentSpacesClicked(
+        newStatus,
+        space[0],
+        space[1]
+      );
       const newSpacesToUncover = findAdjacentUnclickedZeroes({
         ...info,
         status: newStatus,
