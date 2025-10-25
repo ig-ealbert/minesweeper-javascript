@@ -63,17 +63,17 @@ export default function Home() {
     let newStatus = markSpaceAndAllAdjacentSpacesClicked(boardStatus, row, col);
     while (spacesToUncover.length > 0) {
       const space = spacesToUncover[0];
-      newStatus = markSpaceAndAllAdjacentSpacesClicked(
-        newStatus,
-        space[0],
-        space[1]
-      );
       const newSpacesToUncover = findAdjacentUnclickedZeroes({
         ...info,
         status: newStatus,
         row: space[0],
         col: space[1],
-      });
+      }); // This must come before marking spaces clicked
+      newStatus = markSpaceAndAllAdjacentSpacesClicked(
+        newStatus,
+        space[0],
+        space[1]
+      );
       for (const newSpace of newSpacesToUncover) {
         if (!arrayContainsSpace(spacesToUncover, newSpace)) {
           spacesToUncover.push(newSpace);
