@@ -7,15 +7,11 @@ import { boardUI } from "@/types/boardUI";
 import { mineState } from "@/types/mineState";
 import { size } from "@/types/size";
 import { difficulties } from "@/lib/difficulties";
-import { checkForWin } from "@/lib/end-game";
+import { checkForWin, getGameOverMessage } from "@/lib/end-game";
 import { initializeMines } from "@/lib/game-state";
-import {
-  setupHints,
-  findAdjacentUnclickedZeroes,
-  markSpaceAndAllAdjacentSpacesClicked,
-} from "@/lib/hints";
+import { setupHints } from "@/lib/hints";
 import { splashInfo } from "@/types/splashInfo";
-import { arrayContainsSpace } from "@/lib/splash";
+import { fastSplash } from "@/lib/splash";
 import { ClickStatus } from "@/enums/clickStatus";
 import { Difficulty } from "@/enums/difficulty";
 
@@ -51,7 +47,7 @@ export default function Home() {
     new Array(size.rows).fill(new Array(size.columns).fill(-2))
   );
 
-  function fastSplash(row: number, col: number) {
+  function splash(row: number, col: number) {
     const info: splashInfo = {
       status: boardStatus,
       values: boardValue,
@@ -59,28 +55,7 @@ export default function Home() {
       col,
       size,
     };
-    const spacesToUncover = findAdjacentUnclickedZeroes(info);
-    let newStatus = markSpaceAndAllAdjacentSpacesClicked(boardStatus, row, col);
-    while (spacesToUncover.length > 0) {
-      const space = spacesToUncover[0];
-      const newSpacesToUncover = findAdjacentUnclickedZeroes({
-        ...info,
-        status: newStatus,
-        row: space[0],
-        col: space[1],
-      }); // This must come before marking spaces clicked
-      newStatus = markSpaceAndAllAdjacentSpacesClicked(
-        newStatus,
-        space[0],
-        space[1]
-      );
-      for (const newSpace of newSpacesToUncover) {
-        if (!arrayContainsSpace(spacesToUncover, newSpace)) {
-          spacesToUncover.push(newSpace);
-        }
-      }
-      spacesToUncover.shift(); // Remove first space in array
-    }
+    const newStatus = fastSplash(info);
     setBoardStatus(newStatus);
   }
 
@@ -101,12 +76,8 @@ export default function Home() {
     setIsGameOver(false);
   }
 
-  function gameOver(didWin: boolean) {
-    if (!didWin) {
-      setMessage("You clicked on a mine.  You lose!");
-    } else {
-      setMessage("You win!");
-    }
+  function gameOver(isWin: boolean) {
+    setMessage(getGameOverMessage(isWin));
     setIsGameOver(true);
   }
 
@@ -127,7 +98,7 @@ export default function Home() {
           boardValue={boardValue}
           boardStatus={boardStatus}
           setBoardStatus={handleUpdateStatuses}
-          splash={fastSplash}
+          splash={splash}
           isGameOver={isGameOver}
           checkForWin={didWin}
           handleLoss={() => gameOver(false)}

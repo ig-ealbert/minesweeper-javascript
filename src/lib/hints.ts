@@ -34,11 +34,7 @@ export function markSpaceClicked(
   return newStatus;
 }
 
-export function markSpaceAndAllAdjacentSpacesClicked(
-  status: number[][],
-  row: number,
-  column: number
-) {
+export function revealSquare(status: number[][], row: number, column: number) {
   let newStatus = markSpaceClicked(status, row, column);
   for (const offset of adjacentCells) {
     const newRow = row + offset[0];

@@ -4,7 +4,7 @@ import {
   adjacentCellsWithMines,
   isOnBoard,
   markSpaceClicked,
-  markSpaceAndAllAdjacentSpacesClicked,
+  revealSquare,
   findAdjacentUnclickedZeroes,
   setupHints,
 } from "./hints";
@@ -94,12 +94,8 @@ describe("Hints helper functions", () => {
     assert.strictEqual(newBoard[0][0], 1); // clicked
   });
 
-  it("Marks a space and all adjacent spaces as clicked", () => {
-    const newBoard = markSpaceAndAllAdjacentSpacesClicked(
-      emptyBoardStatuses,
-      1,
-      1
-    );
+  it("Reveals a square", () => {
+    const newBoard = revealSquare(emptyBoardStatuses, 1, 1);
     assert.strictEqual(newBoard[0][0], 1);
     assert.strictEqual(newBoard[0][1], 1);
     assert.strictEqual(newBoard[0][2], 1);
@@ -111,12 +107,8 @@ describe("Hints helper functions", () => {
     assert.strictEqual(newBoard[2][2], 1);
   });
 
-  it("Marks an edge space and all adjacent spaces as clicked", () => {
-    const newBoard = markSpaceAndAllAdjacentSpacesClicked(
-      emptyBoardStatuses,
-      1,
-      0
-    );
+  it("Reveals a square for an edge space", () => {
+    const newBoard = revealSquare(emptyBoardStatuses, 1, 0);
     assert.strictEqual(newBoard[0][0], 1);
     assert.strictEqual(newBoard[0][1], 1);
     assert.strictEqual(newBoard[1][0], 1);
