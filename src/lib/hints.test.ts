@@ -20,16 +20,6 @@ describe("Hints helper functions", () => {
     [0, 0, 0, 0, 4, -1, 8, -1],
     [0, 0, 0, 1, -1, -1, -1, -1],
   ];
-  // const gameState = [
-  //   [false, false, false, false, false, false, false, true],
-  //   [false, false, false, false, false, false, false, true],
-  //   [false, false, false, false, false, false, false, true],
-  //   [false, false, false, false, false, false, false, true],
-  //   [false, false, false, false, false, false, false, true],
-  //   [false, false, false, false, false, true, true, true],
-  //   [false, false, false, false, false, true, false, true],
-  //   [false, false, false, false, true, true, true, true],
-  // ];
 
   const spacesClicked = [
     [1, 0, 0, 0, 0, 0, 0, 0],
