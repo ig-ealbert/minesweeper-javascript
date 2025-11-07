@@ -6,22 +6,22 @@ import { boardUI } from "@/types/boardUI";
 import { ClickStatus } from "@/enums/clickStatus";
 
 export default function Board(props: boardProps) {
-  function checkForWin(newBoardStatus: boardUI) {
-    if (props.checkForWin(newBoardStatus)) {
-      for (const row of newBoardStatus) {
+  function checkForWin(newClickStatus: boardUI) {
+    if (props.checkForWin(newClickStatus)) {
+      for (const row of newClickStatus) {
         for (const [index, space] of row.entries()) {
           if (space === ClickStatus.UNCLICKED) {
             row[index] = ClickStatus.FLAGGED;
           }
         }
       }
-      props.setBoardStatus(newBoardStatus);
+      props.setClickStatus(newClickStatus);
       props.handleWin();
     }
   }
 
   function clickSpace(row: number, column: number) {
-    if (props.boardStatus[row][column] === ClickStatus.FLAGGED) {
+    if (props.clickStatus[row][column] === ClickStatus.FLAGGED) {
       return; // ignore clicks on flags
     }
 
@@ -30,8 +30,8 @@ export default function Board(props: boardProps) {
       props.handleLoss();
     }
 
-    const updatedStatus = markSpaceClicked(props.boardStatus, row, column);
-    props.setBoardStatus(updatedStatus);
+    const updatedStatus = markSpaceClicked(props.clickStatus, row, column);
+    props.setClickStatus(updatedStatus);
 
     if (clickedSpaceHint === 0) {
       props.splash(row, column);
@@ -41,17 +41,17 @@ export default function Board(props: boardProps) {
   }
 
   function toggleFlag(row: number, column: number) {
-    const clickStatus = props.boardStatus[row][column];
+    const clickStatus = props.clickStatus[row][column];
     if (clickStatus === ClickStatus.CLICKED) {
       return; // Don't do anything if we've already clicked here
     }
-    const newBoardStatus = props.boardStatus.map((row) => row.slice());
-    newBoardStatus[row][column] =
+    const newClickStatus = props.clickStatus.map((row) => row.slice());
+    newClickStatus[row][column] =
       clickStatus === ClickStatus.FLAGGED
         ? ClickStatus.UNCLICKED
         : ClickStatus.FLAGGED;
-    props.setBoardStatus(newBoardStatus);
-    checkForWin(newBoardStatus);
+    props.setClickStatus(newClickStatus);
+    checkForWin(newClickStatus);
   }
 
   return (
@@ -62,7 +62,7 @@ export default function Board(props: boardProps) {
             {new Array(props.columns).fill("").map((_, colIndex) => (
               <Square
                 key={`row${rowIndex}col${colIndex}`}
-                status={props.boardStatus[rowIndex][colIndex]}
+                status={props.clickStatus[rowIndex][colIndex]}
                 value={props.boardValue[rowIndex][colIndex]}
                 isGameOver={props.isGameOver}
                 clickHandler={() => clickSpace(rowIndex, colIndex)}

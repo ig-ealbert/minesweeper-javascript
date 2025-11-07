@@ -32,7 +32,7 @@ describe("Hints helper functions", () => {
     [0, 0, 0, 0, 0, 1, 1, 1],
   ];
 
-  const emptyBoardStatuses = new Array(8).fill(new Array(8).fill(0));
+  const emptyClickStatuses = new Array(8).fill(new Array(8).fill(0));
 
   it("Finds 0 adjacent cells with mines", () => {
     const answer = adjacentCellsWithMines(0, 0, gameState);
@@ -90,12 +90,12 @@ describe("Hints helper functions", () => {
   });
 
   it("Marks a space as clicked", () => {
-    const newBoard = markSpaceClicked(emptyBoardStatuses, 0, 0);
+    const newBoard = markSpaceClicked(emptyClickStatuses, 0, 0);
     assert.strictEqual(newBoard[0][0], 1); // clicked
   });
 
   it("Reveals a square", () => {
-    const newBoard = revealSquare(emptyBoardStatuses, 1, 1);
+    const newBoard = revealSquare(emptyClickStatuses, 1, 1);
     assert.strictEqual(newBoard[0][0], 1);
     assert.strictEqual(newBoard[0][1], 1);
     assert.strictEqual(newBoard[0][2], 1);
@@ -108,7 +108,7 @@ describe("Hints helper functions", () => {
   });
 
   it("Reveals a square for an edge space", () => {
-    const newBoard = revealSquare(emptyBoardStatuses, 1, 0);
+    const newBoard = revealSquare(emptyClickStatuses, 1, 0);
     assert.strictEqual(newBoard[0][0], 1);
     assert.strictEqual(newBoard[0][1], 1);
     assert.strictEqual(newBoard[1][0], 1);

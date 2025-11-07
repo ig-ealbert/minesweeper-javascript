@@ -32,7 +32,7 @@ export default function Home() {
   const [message, setMessage] = useState<string>("");
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
 
-  const [boardStatus, setBoardStatus] = useState<boardUI>(
+  const [clickStatus, setClickStatus] = useState<boardUI>(
     new Array(size.rows).fill(
       new Array(size.columns).fill(ClickStatus.UNCLICKED)
     )
@@ -45,14 +45,14 @@ export default function Home() {
 
   function splash(row: number, col: number) {
     const info: splashInfo = {
-      status: boardStatus,
+      status: clickStatus,
       values: boardValue,
       row,
       col,
       size,
     };
     const newStatus = fastSplash(info);
-    setBoardStatus(newStatus);
+    setClickStatus(newStatus);
   }
 
   function handleDifficultyChange(event: ChangeEvent<HTMLSelectElement>) {
@@ -62,7 +62,7 @@ export default function Home() {
   function reset(size: size, numMines: number) {
     const newMines = initializeMines(size, numMines);
     setBoardValue(setupHints(newMines));
-    setBoardStatus(
+    setClickStatus(
       new Array(size.rows).fill(
         new Array(size.columns).fill(ClickStatus.UNCLICKED)
       )
@@ -80,8 +80,8 @@ export default function Home() {
     return checkForWin(boardValue, uiState);
   }
 
-  function handleUpdateStatuses(newBoardStatus: boardUI) {
-    setBoardStatus(newBoardStatus);
+  function handleUpdateStatuses(newClickStatus: boardUI) {
+    setClickStatus(newClickStatus);
   }
 
   return (
@@ -91,8 +91,8 @@ export default function Home() {
           rows={size.rows}
           columns={size.columns}
           boardValue={boardValue}
-          boardStatus={boardStatus}
-          setBoardStatus={handleUpdateStatuses}
+          clickStatus={clickStatus}
+          setClickStatus={handleUpdateStatuses}
           splash={splash}
           isGameOver={isGameOver}
           checkForWin={didWin}

@@ -5,13 +5,13 @@ type handlers = {
   handleLoss: () => void;
   handleWin: () => void;
   checkForWin: (uiState: number[][]) => boolean;
-  setBoardStatus: (newStatus: boardUI) => void;
+  setClickStatus: (newStatus: boardUI) => void;
   splash: (row: number, col: number) => void;
 };
 
 type boards = {
   boardValue: boardUI;
-  boardStatus: boardUI;
+  clickStatus: boardUI;
 };
 
 type isGameOver = {
