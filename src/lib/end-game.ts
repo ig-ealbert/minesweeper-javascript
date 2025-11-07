@@ -1,8 +1,10 @@
-export function checkForWin(gameState: boolean[][], uiState: number[][]) {
+import { ClickStatus } from "@/enums/clickStatus";
+
+export function checkForWin(gameState: number[][], uiState: number[][]) {
   for (let i = 0; i < gameState.length; i++) {
     for (let j = 0; j < gameState[i].length; j++) {
-      if (uiState[i][j] !== 1 && !gameState[i][j]) {
-        // hidden mines still exist
+      if (uiState[i][j] === ClickStatus.UNCLICKED && gameState[i][j] !== -1) {
+        // unclicked non-mine spaces exist
         return false;
       }
     }

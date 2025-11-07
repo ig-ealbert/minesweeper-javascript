@@ -4,14 +4,14 @@ import { checkForWin, getGameOverMessage } from "./end-game";
 
 describe("End game helper functions", () => {
   const gameState = [
-    [false, false, false, false, false, false, false, true],
-    [false, false, false, false, false, false, false, true],
-    [false, false, false, false, false, false, false, true],
-    [false, false, false, false, false, false, false, true],
-    [false, false, false, false, false, false, false, true],
-    [false, false, false, false, false, false, false, true],
-    [false, false, false, false, false, false, false, true],
-    [false, false, false, false, false, false, false, true],
+    [0, 0, 0, 0, 0, 0, 2, -1],
+    [0, 0, 0, 0, 0, 0, 3, -1],
+    [0, 0, 0, 0, 0, 0, 3, -1],
+    [0, 0, 0, 0, 0, 0, 3, -1],
+    [0, 0, 0, 0, 0, 0, 3, -1],
+    [0, 0, 0, 0, 0, 0, 3, -1],
+    [0, 0, 0, 0, 0, 0, 3, -1],
+    [0, 0, 0, 0, 0, 0, 2, -1],
   ];
 
   const uiState = [

@@ -3,10 +3,10 @@ import assert from "node:assert";
 import { initializeMines } from "./game-state";
 
 describe("Game state helper functions", () => {
-  function countMines(board: boolean[][]) {
+  function countMines(board: number[][]) {
     let mines = 0;
     for (const row of board) {
-      const count = row.filter((value) => value);
+      const count = row.filter((value) => value === -1);
       mines = mines + count.length;
     }
     return mines;

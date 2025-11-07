@@ -2,7 +2,7 @@ import { size } from "@/types/size";
 
 export function initializeMines(size: size, mines: number) {
   let board = [];
-  const row = new Array(size.columns).fill(false);
+  const row = new Array(size.columns).fill(-2);
   for (let i = 0; i < size.rows; i++) {
     board.push(row.slice());
   }
@@ -10,13 +10,13 @@ export function initializeMines(size: size, mines: number) {
   return board;
 }
 
-function addMines(board: boolean[][], mines: number) {
+function addMines(board: number[][], mines: number) {
   for (let i = 0; i < mines; i++) {
     const randomRow = randomInt(0, board.length);
     const randomCol = randomInt(0, board[0].length);
-    if (!board[randomRow][randomCol]) {
+    if (board[randomRow][randomCol] !== -1) {
       // if cell is not a mine
-      board[randomRow][randomCol] = true; // add a mine
+      board[randomRow][randomCol] = -1; // add a mine
     } else {
       i--; // otherwise redo
     }

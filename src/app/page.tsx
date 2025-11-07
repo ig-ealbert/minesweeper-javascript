@@ -4,7 +4,6 @@ import { useState, useEffect, ChangeEvent } from "react";
 import Board from "@/components/board";
 import styles from "./page.module.css";
 import { boardUI } from "@/types/boardUI";
-import { mineState } from "@/types/mineState";
 import { size } from "@/types/size";
 import { difficulties } from "@/lib/difficulties";
 import { checkForWin, getGameOverMessage } from "@/lib/end-game";
@@ -29,9 +28,6 @@ export default function Home() {
     setNumMines(newNumMines);
     reset(newSize, newNumMines);
   }, [difficulty]);
-  const [mineLayout, setMineLayout] = useState<mineState>(
-    new Array(size.rows).fill(new Array(size.columns).fill(0))
-  );
 
   const [message, setMessage] = useState<string>("");
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
@@ -65,13 +61,12 @@ export default function Home() {
 
   function reset(size: size, numMines: number) {
     const newMines = initializeMines(size, numMines);
-    setMineLayout(newMines);
+    setBoardValue(setupHints(newMines));
     setBoardStatus(
       new Array(size.rows).fill(
         new Array(size.columns).fill(ClickStatus.UNCLICKED)
       )
     );
-    setBoardValue(setupHints(newMines));
     setMessage("");
     setIsGameOver(false);
   }
@@ -82,7 +77,7 @@ export default function Home() {
   }
 
   function didWin(uiState: number[][]) {
-    return checkForWin(mineLayout, uiState);
+    return checkForWin(boardValue, uiState);
   }
 
   function handleUpdateStatuses(newBoardStatus: boardUI) {

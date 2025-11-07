@@ -6,14 +6,14 @@ import { ClickStatus } from "@/enums/clickStatus";
 export function adjacentCellsWithMines(
   row: number,
   col: number,
-  gameState: boolean[][]
+  gameState: number[][]
 ) {
   let total = 0;
   for (const offsets of adjacentCells) {
     const newRow = row + offsets[0];
     const newCol = col + offsets[1];
     const size = { rows: gameState.length, columns: gameState[0].length };
-    if (isOnBoard(newRow, newCol, size) && gameState[newRow][newCol]) {
+    if (isOnBoard(newRow, newCol, size) && gameState[newRow][newCol] === -1) {
       total++; // mine on adjacent cell
     }
   }
@@ -63,18 +63,13 @@ export function findAdjacentUnclickedZeroes(info: splashInfo) {
   return validZeroes;
 }
 
-export function setupHints(mines: boolean[][]) {
-  const hints = [];
-  for (let i = 0; i < mines.length; i++) {
-    const row = [];
-    for (let j = 0; j < mines[0].length; j++) {
-      if (mines[i][j]) {
-        row.push(-1);
-      } else {
-        row.push(adjacentCellsWithMines(i, j, mines));
+export function setupHints(values: number[][]) {
+  for (let i = 0; i < values.length; i++) {
+    for (let j = 0; j < values[0].length; j++) {
+      if (values[i][j] !== -1) {
+        values[i][j] = adjacentCellsWithMines(i, j, values);
       }
     }
-    hints.push(row);
   }
-  return hints;
+  return values;
 }
